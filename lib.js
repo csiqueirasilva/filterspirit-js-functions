@@ -61,3 +61,19 @@ function fs_pickurl(url, cb, type) {
     
     xhr.send();
 }
+
+function fs_savecontents(contents, fname, extType) {
+	var a = document.createElement("a");
+	var type = 'application/octet-stream';
+	var name = 'output.filter';
+	if(extType) {
+		type = extType;
+	}
+	if(fname) {
+		name = fname;
+	}
+	var file = new Blob([contents], {type: type});
+	a.href = URL.createObjectURL(file);
+	a.download = name;
+    a.dispatchEvent(new MouseEvent("click"));
+}
