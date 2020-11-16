@@ -85,8 +85,8 @@ function fs_fillcanvas(inputData, screenWidth, screenHeight) {
 		
 		inputData.sort((a, b) => b[1] - a[1]); // sort elements by Y size; descending
 		
-		var marginX = 2;
-		var marginY = 2; // empty space between rectangles
+		var marginX = 1;
+		var marginY = 1; // empty space between rectangles
 		
 		var accWidth = 0;
 		var idx = 0;
@@ -95,6 +95,7 @@ function fs_fillcanvas(inputData, screenWidth, screenHeight) {
 		var rowY = parseInt(screenHeight / 2);
 		var accHeight = 0;
 		var whereToY = -1;
+		var iteratorY = 0;
 		var lastRowAlone = false;
 
 		do {
@@ -141,15 +142,23 @@ function fs_fillcanvas(inputData, screenWidth, screenHeight) {
 					}
 				}
 				
+				// calculates how much space is left empty on the x axis of the row and starts an accumulator for the x position of the elements of the row
 				var leftoverX = screenWidth - accWidth;
 				var halfLeftoverX = parseInt(leftoverX / 2);
 				var accRow = halfLeftoverX;
 				
+				// if not the first, adjust rowY to the center of the biggest Y element, creating a "line height"
+				var rowYdiff = 0;
+				if(iteratorY !== 0) {
+					rowYdiff = -whereToY * parseInt(topYInRow / 2 + marginY);
+				}
+				
 				// do a pass on the row, to calculate the position of the elements
 				// using indexes 2 and 3 to store position X and position Y
+				// spawns elements from left to right in the row
 				for(var j = 0; j < rowSorted.length; j++) {
 					rowSorted[j][2] = accRow + marginX;
-					rowSorted[j][3] = rowY - parseInt(rowSorted[j][1] / 2);
+					rowSorted[j][3] = rowY + rowYdiff - parseInt(rowSorted[j][1] / 2);
 					accRow += rowSorted[j][0] + marginX;
 				}
 				
@@ -158,10 +167,20 @@ function fs_fillcanvas(inputData, screenWidth, screenHeight) {
 				idx = i;
 				ret = ret.concat(rowSorted);
 				
-				accHeight += topYInRow + marginY;
+				// if its the first row there is a special rule to calculate the next position; as it always starts in the center Y of the screen and the next iterations will start relative to the bottom or top of the cumulative height of the previous rows
+				// the position Y of the row is calculated as following:
+				// first at the center of the screen,
+				// then 1 to top, 1 to bottom, 2 to top, 2 to bottom, and so on.
+				// the numbers to top and to bottom arent coordinates that are easily calculated, because it needs to take in cosideration the center of the line height of the row that is being created. thats why the iterations after the first starts at the bottom or top of the last row.
+				if(iteratorY++ === 0) {
+					accHeight += topYInRow;
+					rowY += parseInt((topYInRow / 2)) * whereToY;
+				} else {
+					rowY += accHeight * whereToY;
+					accHeight += topYInRow + marginY;
+				}
 				
-				rowY += accHeight * whereToY;
-				
+				// change direction for next row spawn
 				whereToY *= -1;
 				
 				// decrement iterator if it needs to create a new row for the last element

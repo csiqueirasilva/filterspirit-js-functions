@@ -18,7 +18,7 @@
 		<div>
 		<h3>Item preview</h3>
 			<label>min X</label>
-			<input type="text" id="itemview-minx" value="64">
+			<input type="text" id="itemview-minx" value="32">
 			<label>max X</label>
 			<input type="text" id="itemview-maxx" value="128">
 			<label>min Y</label>
@@ -34,7 +34,7 @@
 		</div>
 		<div>
 			<label>N elements to draw</label>
-			<input type="text" id="itemview-nelements" value="86">
+			<input type="text" id="itemview-nelements" value="100">
 			<button onclick="itemviewredraw();">Clear and redraw</button>
 		</div>
 	</div>
