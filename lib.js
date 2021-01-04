@@ -1,3 +1,108 @@
+const filterspirit = (function(){
+
+	class filterspirit_obj {
+		
+		constructor() {
+		}
+		
+	}
+
+	return new filterspirit_obj();
+	
+}());
+
+filterspirit.network = (function(){
+	
+	class filterspirit_network_obj {
+		
+		constructor() {
+			this.urlContents = null;
+			this.urlError = null;
+		}
+		
+		pickurl(url) {
+			var o = this;
+			fs_pickurl(url, (file, err) => {
+				o.lastUrlContents = file;
+				o.lastUrlError = err;
+			});
+		}
+		
+		set lastUrlError(v) {
+			this.urlError = v;
+		}
+
+		set lastUrlContents(v) {
+			this.urlContents = v;
+		}
+
+		get lastUrlError() {
+			var ret = this.urlError;
+			this.urlError = null;
+			return ret;
+		}
+
+		get lastUrlContents() {
+			var ret = this.urlContents;
+			this.urlContents = null;
+			return ret;
+		}
+	}
+
+	return new filterspirit_network_obj();
+	
+}());
+
+filterspirit.files = (function(){
+	
+	class filterspirit_files_obj {
+		
+		constructor() {
+			this.fileContents = null;
+			this.fileError = null;
+		}
+		
+		pickfile(fileType) {
+			var o = this;
+			fs_pickfile((file, err) => {
+				o.lastFileContents = file;
+				o.lastFileError = err;
+			}, fileType);
+		}
+
+		pickfilter() {
+			var o = this;
+			fs_pickfile((file, err) => {
+				o.lastFileContents = file;
+				o.lastFileError = err;
+			}, '.filter');
+		}
+		
+		set lastFileError(v) {
+			this.fileError = v;
+		}
+
+		set lastFileContents(v) {
+			this.fileContents = v;
+		}
+
+		get lastFileError() {
+			var ret = this.lastFileError;
+			this.lastFileError = null;
+			return ret;
+		}
+
+		get lastFileContents() {
+			var ret = this.fileContents;
+			this.fileContents = null;
+			return ret;
+		}
+	}
+
+	return new filterspirit_files_obj();
+	
+}());
+
 function fs_pickfile(cb, type) {
     var input = document.createElement('input');
     input.type = 'file';
